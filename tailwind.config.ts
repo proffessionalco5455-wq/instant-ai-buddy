@@ -61,7 +61,30 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// AI-specific colors
+				'ai-primary': 'hsl(var(--ai-primary))',
+				'ai-secondary': 'hsl(var(--ai-secondary))',
+				'ai-accent': 'hsl(var(--ai-accent))',
+				overlay: 'hsl(var(--overlay))',
+				'overlay-border': 'hsl(var(--overlay-border))',
+				success: 'hsl(var(--success))',
+				'success-foreground': 'hsl(var(--success-foreground))'
+			},
+			backgroundImage: {
+				'gradient-ai': 'var(--gradient-ai)',
+				'gradient-subtle': 'var(--gradient-subtle)',
+				'gradient-glow': 'var(--gradient-glow)'
+			},
+			boxShadow: {
+				'ai': 'var(--shadow-ai)',
+				'overlay': 'var(--shadow-overlay)',
+				'glow': '0 0 40px hsl(var(--ai-primary) / 0.6)'
+			},
+			animation: {
+				'fade-in': 'fadeIn 0.5s ease-out',
+				'slide-up': 'slideUp 0.3s ease-out',
+				'pulse-glow': 'pulse-glow 2s infinite'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
