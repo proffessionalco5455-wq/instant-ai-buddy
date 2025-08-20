@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { processText } from '@/lib/api';
 import { useTextSelection } from '@/hooks/useKeyboardShortcut';
 import { Copy, Wand2, Languages, FileText, Lightbulb } from 'lucide-react';
 
@@ -28,28 +29,28 @@ export const TextProcessor = () => {
       title: 'Summarize',
       icon: <FileText className="h-4 w-4" />,
       description: 'Create a concise summary',
-      action: (text) => `Summary: ${text.substring(0, 100)}... [Key points extracted]`
+      action: (text) => text
     },
     {
       id: 'rephrase',
       title: 'Rephrase',
       icon: <Wand2 className="h-4 w-4" />,
       description: 'Rewrite in different words',
-      action: (text) => `Rephrased: ${text.split(' ').reverse().join(' ')} [Professional tone applied]`
+      action: (text) => text
     },
     {
       id: 'translate',
       title: 'Translate',
       icon: <Languages className="h-4 w-4" />,
       description: 'Translate to another language',
-      action: (text) => `Translated (ES): ${text} [Spanish translation]`
+      action: (text) => text
     },
     {
       id: 'expand',
       title: 'Expand',
       icon: <Lightbulb className="h-4 w-4" />,
       description: 'Add more detail and context',
-      action: (text) => `Expanded: ${text} This concept can be further explained with additional context and examples that help clarify the meaning...`
+      action: (text) => text
     }
   ];
 
@@ -82,11 +83,14 @@ export const TextProcessor = () => {
 
     setIsProcessing(true);
     
-    // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const result = option.action(selectedText);
-    setProcessedText(result);
+    try {
+      const mode = option.id as 'summarize' | 'rephrase' | 'translate' | 'expand';
+      const language = mode === 'translate' ? 'ES' : undefined;
+      const res = await processText(mode, selectedText, language);
+      setProcessedText(res.text);
+    } catch (err: any) {
+      toast({ title: 'Error', description: err?.message || 'Processing failed', variant: 'destructive' })
+    }
     setIsProcessing(false);
     
     toast({
