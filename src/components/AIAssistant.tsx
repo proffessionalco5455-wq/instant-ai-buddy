@@ -20,6 +20,7 @@ import {
   Scissors
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { chat } from "@/lib/api";
 
 interface Message {
   id: string;
@@ -105,33 +106,20 @@ export const AIAssistant = () => {
 
   const simulateAIResponse = async (userMessage: string) => {
     setIsTyping(true);
-    
-    // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
-    
-    let response = '';
-    
-    if (userMessage.toLowerCase().includes('summarize')) {
-      response = "Here's a concise summary:\n\n• Key point 1: Main concept explained clearly\n• Key point 2: Supporting details highlighted\n• Key point 3: Final conclusion or takeaway";
-    } else if (userMessage.toLowerCase().includes('rephrase')) {
-      response = "Here's an improved version of your text:\n\n\"Your content has been refined for better clarity, professionalism, and impact. The structure flows more naturally while maintaining your original meaning.\"";
-    } else if (userMessage.toLowerCase().includes('translate')) {
-      response = "Translation completed! The text has been accurately translated while preserving the original tone and context.";
-    } else if (userMessage.toLowerCase().includes('ideas')) {
-      response = "Here are 5 creative ideas:\n\n1. 💡 Innovative approach using modern techniques\n2. 🎯 Targeted solution for specific needs\n3. 🚀 Scalable implementation strategy\n4. 🎨 Creative twist on traditional methods\n5. ⚡ Quick-win solution for immediate impact";
-    } else {
-      response = "I understand your request! As an AI assistant, I'm here to help with writing, analysis, translation, brainstorming, and much more. How can I assist you further?";
+    try {
+      const res = await chat(userMessage);
+      const aiMessage: Message = {
+        id: Date.now().toString(),
+        type: 'ai',
+        content: res.text,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, aiMessage]);
+    } catch (err: any) {
+      toast({ title: 'Error', description: err?.message || 'Failed to get AI response', variant: 'destructive' })
+    } finally {
+      setIsTyping(false);
     }
-
-    const aiMessage: Message = {
-      id: Date.now().toString(),
-      type: 'ai',
-      content: response,
-      timestamp: new Date()
-    };
-
-    setIsTyping(false);
-    setMessages(prev => [...prev, aiMessage]);
   };
 
   const handleSendMessage = async () => {
